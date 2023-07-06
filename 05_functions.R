@@ -2,7 +2,7 @@
 # 1X Introduction to R
 # Phil Swatton
 # Sunday 9th July 2023, 11am-5pm BST
-# File 05: extras
+# File 05: functions, loops, progr
 
 
 ## Packages
@@ -52,13 +52,62 @@ root(27, 3)
 
 
 
+# 2 if else ----
 
-# 2 Loops ----
+# We've already seen the vectorised ifelse() in base R and tidyverse's
+# case_when() functions. However, there is also a global if() function.
+
+# This takes a *single* boolean value or test, and if TRUE it does whatever
+# is inside the curly brackets:
+
+if (TRUE) {
+  print("Do this!")
+}
+
+if (FALSE) {
+  print("Don't do this!")
+}
+
+# Sometimes, you want to do something else if the first part isn't true.
+# For instance:
+
+if (2 > 4) {
+  print("2 is greater than 4")
+} else {
+  print("2 is less than or equal to 4")
+}
+
+# You can chain multiple if/else statements:
+
+if (2 > 4) {
+  print("2 is greater than 4")
+} else if (2 == 4) {
+  print("2 is equal to 4")
+} else {
+  print("2 is less than 4")
+}
+
+# This type of command flow can be very useful in writing functions.
+# It can also be useful for other tasks, like making sure a particular folder 
+# exists (e.g. a 'results' folder before saving your latex tables):
+
+if (!"my_folder" %in% dir()) {
+  dir.create("my_folder")
+}
+
+
+
+# 3 Loops ----
 
 # Loops are a common programming construct in almost every programming language.
 # Like functions, they're very useful for avoiding the need to copy and paste.
 
-## 2.1 Base R loops ----
+# Where functions define an operation that we then apply to data, loops iteratively
+# perform the same action over and over again.
+
+# Combining them goes a long way:
+
+## 3.1 Base R loops ----
 
 # The basic loop in R uses the special for() function and in keyword:
 
@@ -77,7 +126,7 @@ for (i in 1:10) {
 
 
 
-## 2.2 Apply -----
+## 3.2 Apply -----
 
 # The apply family of functions is a quite powerful version of loops:
 ?apply
@@ -103,7 +152,7 @@ apply(ches |> select_if(is.numeric),
 
 
 
-## 2.3 map ----
+## 3.3 map ----
 
 # The map family of functions is the tidyverse's answer to apply/lapply.
 
@@ -131,7 +180,7 @@ map_dfr(countries, filter_country)
 
 
 
-## 2.4 Example Use Case ----
+## 3.4 Example Use Case ----
 
 # Let's take the list of CHES dataframes from earlier
 df_list <- map(countries, filter_country)
