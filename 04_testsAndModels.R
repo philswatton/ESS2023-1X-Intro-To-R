@@ -235,9 +235,6 @@ detach(books)
 
 
 
-# That's all for today folks!
-
-
 
 # Exercises ----
 
