@@ -88,14 +88,15 @@ apply(ches |> select_if(is.numeric),
       FUN=mean,
       na.rm=T)
 
-# It takes a dataframe as the first input.
+# It takes a dataframe (or matrix) as the first input.
 
-# The margin specifies whether to apply the operation by row (1)
+# The margin argument specifies whether to apply the operation by row (1)
 # or column (2).
 
 # The fun argument takes a function as input. In this case, I supplied
 # the mean function.
-# The ... passes arguments to the function - in this case na.rm=T.
+
+# The ... passes extra arguments to the function - in this case na.rm=T.
 
 # lapply is the equivalent for lists:
 ?lapply
@@ -104,26 +105,44 @@ apply(ches |> select_if(is.numeric),
 
 ## 2.3 map ----
 
-# The map family of functions is the tidyverse answer to 
-# apply.
+# The map family of functions is the tidyverse's answer to apply/lapply.
 
-# For example, using map to create 3 dataframes and put them in a list:
+# Map will always work over either the elements of a list/vector, or the columns
+# of a dataframe.
+
+# Let's take the example of subsetting 3 countries' data from the CHES.
+# From reading the documentation, I know that 3 is Germany, 6 is France, and 11 is the UK.
 countries <- c(3,6,11)
+
+# I can then write a function that filters for the countries I want, and selects
+# the variables I want before returning the output, given an input country index.
 filter_country <- function(c) {
   out <- ches |> filter(country == c) |> select(party, year, lrgen, lrecon, eu_position, galtan)
   return(out)
 }
+
+# Running map over the indices with this function does this for me:
 map(countries, filter_country)
 
+# There are many map functions. Their suffixes determine what kind of data
+# you get back. For instance, map_dfr takes the outputs, then rowbinds them
+# to form a single dataset:
+map_dfr(countries, filter_country)
 
 
-## 2.4 Use example ----
 
-# Let's take that list of dataframes from earlier
+## 2.4 Example Use Case ----
+
+# Let's take the list of CHES dataframes from earlier
 df_list <- map(countries, filter_country)
 
-# Let's now pass it through map again to make a list of regression results
+# Let's write a model we'd like to run for each country:
 m <- lrgen ~ lrecon + eu_position + galtan
+
+# We can now use map again. Notice this time I'm writting the 
+# function inside map without ever assigning it to a name. This
+# is a programming concept called 'anonymous functions'. apply() allows
+# for this behaviour too.
 result_list <- map(df_list, function (x) { #notice I'm writing my function INSIDE map this time!
   result <- lm(m, x)
   return(result)
