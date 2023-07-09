@@ -73,7 +73,7 @@ FALSE
 T
 F
 
-# 4) Categories: [England, Scotland, Wales, Northern Ireland]
+# 4) Factors/Categories: [England, Scotland, Wales, Northern Ireland]
 # We'll talk about this one in a bit
 
 # 5) Special cases

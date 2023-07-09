@@ -161,32 +161,41 @@ apply(ches |> select_if(is.numeric),
 
 # Let's take the example of subsetting 3 countries' data from the CHES.
 # From reading the documentation, I know that 3 is Germany, 6 is France, and 11 is the UK.
-countries <- c(3,6,11)
+country_indices <- c(3,6,11)
 
 # I can then write a function that filters for the countries I want, and selects
 # the variables I want before returning the output, given an input country index.
-filter_country <- function(c) {
-  out <- ches |> filter(country == c) |> select(party, year, lrgen, lrecon, eu_position, galtan)
-  return(out)
+
+# Let's read it bit by bit:
+
+filter_country <- function(c) { #c is the input of the function
+  out <- ches |> #store the output of the pipe chain in 'out'
+    filter(country == c) |> #filter for country equals c
+    select(party, year, lrgen, lrecon) #select these variables
+  return(out) #return out
 }
 
 # Running map over the indices with this function does this for me:
-map(countries, filter_country)
+map(country_indices, filter_country)
 
 # There are many map functions. Their suffixes determine what kind of data
 # you get back. For instance, map_dfr takes the outputs, then rowbinds them
 # to form a single dataset:
-map_dfr(countries, filter_country)
+map_dfr(country_indices, filter_country)
 
 
 
 ## 3.4 Example Use Case ----
 
+# CHES has a lot of expert measurements on different ideological dimensions.
+# But what is the relationship between them? Let's look at general left-right
+# and economic left-right.
+
 # Let's take the list of CHES dataframes from earlier
 df_list <- map(countries, filter_country)
 
 # Let's write a model we'd like to run for each country:
-m <- lrgen ~ lrecon + eu_position + galtan
+m <- lrgen ~ lrecon
 
 # We can now use map again. Notice this time I'm writting the 
 # function inside map without ever assigning it to a name. This
@@ -200,6 +209,62 @@ result_list <- map(df_list, function (x) { #notice I'm writing my function INSID
 # Pass the list to screenreg:
 screenreg(result_list,
           custom.model.names = c("Germany", "France", "UK"))
+
+
+
+
+# That's all folks!
+
+
+
+
+# Exercises ----
+
+
+# Run these lines of code:
+library(tidyverse)
+library(readstata13)
+library(texreg)
+ches <- read.dta13("data/1999-2019_CHES_dataset_means(v3).dta")
+country_indices <- c(3,6,11)
+
+
+
+# 1) This is a copy paste of the function used above. Add the 'eu_position' and
+#    'galtan' variables to the select() call
+filter_country <- function(c) {
+  out <- ches |> 
+    filter(country == c) |> 
+    select(party, year, lrgen, lrecon, eu_position, galtan)
+  return(out)
+}
+
+
+# 2) Run 'country_indices' and your new 'filter_country' function through
+#    'map', and store the output. You want it to be a list of 3 dataframes.
+dlist <- map(country_indices, filter_country)
+
+
+# 3) Build a model (don't run it yet!) regressing 'lrgen' on 'lrecon', 'eu_position',
+#    and 'galtan', to see which dimensions contribute to overall left-right party position.
+ches_model <- lrgen ~ lrecon + eu_position + galtan
+
+
+# 4) Now, run each of the 3 dataframes in your list from question 2 through lm() 
+#    along with your model from question 3. Use the 'map' function to do it and output
+#    a list of results.
+ches_models <- map(dlist, function(x) lm(ches_model, x))
+
+
+# 5) Finally, run your models through screenreg(). Add model names for each country
+headings <- c("Germany", "France", "UK")
+screenreg(ches_models, custom.model.names=headings)
+
+# Congratulations, you've now used functions and loops to run 3 separate models
+# in an efficient way!
+
+
+
 
 
 
