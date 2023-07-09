@@ -2,7 +2,7 @@
 # 1X Introduction to R
 # Phil Swatton
 # Sunday 9th July 2023, 11am-5pm BST
-# File 05: functions, loops, progr
+# File 05: functions, loops, programming
 
 
 ## Packages
@@ -192,7 +192,7 @@ map_dfr(country_indices, filter_country)
 # and economic left-right.
 
 # Let's take the list of CHES dataframes from earlier
-df_list <- map(countries, filter_country)
+df_list <- map(country_indices, filter_country)
 
 # Let's write a model we'd like to run for each country:
 m <- lrgen ~ lrecon
@@ -235,30 +235,25 @@ country_indices <- c(3,6,11)
 filter_country <- function(c) {
   out <- ches |> 
     filter(country == c) |> 
-    select(party, year, lrgen, lrecon, eu_position, galtan)
+    select(party, year, lrgen, lrecon) #HINT: this is the only line you need to edit
   return(out)
 }
 
 
 # 2) Run 'country_indices' and your new 'filter_country' function through
 #    'map', and store the output. You want it to be a list of 3 dataframes.
-dlist <- map(country_indices, filter_country)
 
 
 # 3) Build a model (don't run it yet!) regressing 'lrgen' on 'lrecon', 'eu_position',
 #    and 'galtan', to see which dimensions contribute to overall left-right party position.
-ches_model <- lrgen ~ lrecon + eu_position + galtan
 
 
 # 4) Now, run each of the 3 dataframes in your list from question 2 through lm() 
 #    along with your model from question 3. Use the 'map' function to do it and output
 #    a list of results.
-ches_models <- map(dlist, function(x) lm(ches_model, x))
 
 
 # 5) Finally, run your models through screenreg(). Add model names for each country
-headings <- c("Germany", "France", "UK")
-screenreg(ches_models, custom.model.names=headings)
 
 # Congratulations, you've now used functions and loops to run 3 separate models
 # in an efficient way!
