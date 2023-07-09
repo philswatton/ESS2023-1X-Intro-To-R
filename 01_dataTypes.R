@@ -37,7 +37,7 @@
 # Some other useful keyboard shortcuts in RStudio:
 # ctrl+z (cmd+z for mac): undo
 # ctrl+s (cmd+s for mac): save
-# ctrl+shift+c (cmd+shift+s for mac): comment/uncomment current/highlighted lines
+# ctrl+shift+c (cmd+shift+c for mac): comment/uncomment current/highlighted lines
 # crtl+f (cmd+f for mac - I think): search and replace. VERY useful, but be CAREFUL not to mess up your code!
 
 
@@ -222,7 +222,7 @@ paste("This", "is", "a", "full", "sentence", sep="-")
 
 # There are four main data structures you're likely to see in R. These are:
 # 1) vectors
-# 2) matrixes (2-dimensional vectors)
+# 2) matrices (2-dimensional vectors)
 # 3) data frames
 # 4) lists
 
